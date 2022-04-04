@@ -17,9 +17,11 @@ defmodule Discuss.Forums do
     Topic.changeset(topic, params)
   end
 
-  def create_topic(params \\ %{}) do
-    changeset = Topic.changeset(%Topic{}, params)
-    Repo.insert(changeset)
+  def create_topic(params \\ %{}, user) do
+    user
+    |> Ecto.build_assoc(:topics)
+    |> Topic.changeset(params)
+    |> Repo.insert()
   end
 
   def get_topic!(id) do
