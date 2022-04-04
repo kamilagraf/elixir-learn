@@ -8,6 +8,12 @@ defmodule DiscussWeb.AuthController do
     signin(conn, user_params)
   end
 
+  def signout(conn, _params) do
+    conn
+    |> configure_session(drop: true)
+    |> redirect(to: Routes.topic_path(conn, :index))
+  end
+
   defp signin(conn, user_params) do
     case Discuss.Accounts.create_or_update_user(user_params) do
       {:ok, user} ->
