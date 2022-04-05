@@ -4,9 +4,10 @@ defmodule Discuss.Forums do
   """
 
   import Ecto.Query, warn: false
-  alias Discuss.Repo
 
+  alias Discuss.Repo
   alias Discuss.Forums.Topic
+  alias Discuss.Forums.Comment
 
 
   def list_topics do
@@ -28,6 +29,11 @@ defmodule Discuss.Forums do
     Repo.get!(Topic, id)
   end
 
+  def get_topic_with_comments!(id) do
+    Repo.get!(Topic, id)
+    |> Repo.preload(:comments)
+  end
+
   def update_topic(%Topic{} = topic, params) do
     topic
     |> Topic.changeset(params)
@@ -37,6 +43,14 @@ defmodule Discuss.Forums do
   def delete_topic(%Topic{} = topic) do
     Repo.delete(topic)
   end
+
+  def create_comment(params \\ %{}, topic) do
+    topic
+    |> Ecto.build_assoc(:comments)
+    |> Comment.changeset(params)
+    |> Repo.insert()
+  end
+
 
 
 end
