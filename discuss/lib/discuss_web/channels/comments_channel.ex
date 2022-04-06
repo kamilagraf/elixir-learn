@@ -2,6 +2,7 @@ defmodule DiscussWeb.CommentsChannel do
   use DiscussWeb, :channel
 
   alias Phoenix.Channel
+  alias Discuss.Repo
 
 
   @impl true
@@ -19,7 +20,7 @@ defmodule DiscussWeb.CommentsChannel do
     case Discuss.Forums.create_comment(%{content: content}, topic, user_id) do
       {:ok, comment} ->
         Channel.broadcast!(socket, "comments:#{socket.assigns.topic.id}:new", %{
-          comment: comment
+          comment: Repo.preload(comment, :user)
         })
 
         {:reply, :ok, socket}
