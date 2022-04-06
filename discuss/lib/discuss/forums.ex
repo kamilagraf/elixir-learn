@@ -31,7 +31,7 @@ defmodule Discuss.Forums do
 
   def get_topic_with_comments!(id) do
     Repo.get!(Topic, id)
-    |> Repo.preload(:comments)
+    |> Repo.preload(comments: [:user])
   end
 
   def update_topic(%Topic{} = topic, params) do
@@ -44,9 +44,9 @@ defmodule Discuss.Forums do
     Repo.delete(topic)
   end
 
-  def create_comment(params \\ %{}, topic) do
+  def create_comment(params \\ %{}, topic, user_id) do
     topic
-    |> Ecto.build_assoc(:comments)
+    |> Ecto.build_assoc(:comments, user_id: user_id)
     |> Comment.changeset(params)
     |> Repo.insert()
   end

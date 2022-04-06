@@ -14,23 +14,24 @@ defmodule DiscussWeb.CommentsChannel do
 
 @impl true
   def handle_in(_name, %{"content" => content}, socket) do
+    %{assigns: %{topic: topic, user_id: user_id}} = socket
 
-  case Discuss.Forums.create_comment(%{content: content}, socket.assigns.topic) do
+    case Discuss.Forums.create_comment(%{content: content}, topic, user_id) do
       {:ok, comment} ->
-                Channel.broadcast!(socket, "comments:#{socket.assigns.topic.id}:new", %{
+        Channel.broadcast!(socket, "comments:#{socket.assigns.topic.id}:new", %{
           comment: comment
         })
+
         {:reply, :ok, socket}
 
       {:error, changeset} ->
         {:reply, {:error, %{errors: changeset}}, socket}
+    end
   end
-
-  end
-
 
   # Add authorization logic here as required.
   # defp authorized?(_payload) do
   #   true
   # end
+
 end

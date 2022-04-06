@@ -8,6 +8,7 @@ const createSocket = (topicId) => {
     channel
         .join()
         .receive('ok', (resp) => {
+            console.log(resp);
             renderComments(resp.comments);
         })
         .receive('error', (resp) => {
@@ -32,13 +33,20 @@ const renderComment = (e) => {
     document.querySelector('.collection').innerHTML += renderedComment;
 };
 
-const commentTemplate = ({ content }) => `
-	<li class="collection-item">
-		<span>
-			${content}
-		</span>
-	</li>
-`;
+const commentTemplate = (comment) => {
+    email = comment.user ? comment.user.email : 'Anonymous';
+
+    return `
+        <li class="collection-item">
+            <span>
+                ${comment.content}
+            </span>
+            <div class="secondary-content">
+                ${email}
+            </div>
+        </li>
+    `;
+};
 
 // export default socket;
 window.createSocket = createSocket;
